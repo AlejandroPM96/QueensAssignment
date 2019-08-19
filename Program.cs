@@ -1,11 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+    Luis Alejandro Peña Montoya A01650535
+    Ana Karen Campos Garcia     A01335037
 
+    -Enviroment Analysis:
+        -Fully observable: any agent in the board can see the entire board and its contents
+        -Cooperative: When one queen can't find a valid place on the board it signals the 
+                    previous one to find a new position so that the new one can retry the 
+                    positioning
+        -Deterministic: Depending on the previous queens a new queen will determine it's new 
+                        position
+        -Sequential: The decisions of the first queens will affect the next queens positions
+        -Static: While a queen is evaluating it's positions the other queens cannot move. And
+                if there is no avialable it "restrains" itself until the previous one finds a
+                new position
+        -Discrete: The system moves throught the steps the queens take on the chess board
+        -Unkown: When a queen is placed it doesn't know where the next ones will be placed
+ */
+
+
+
+using System;
+using System.Collections.Generic;
 namespace Queens
 {
     class Queen{
+        //coordinates to know where the queen is placed
         public int row;
         public int column;
+        /*
+        In this method the queen will check the board for other queens to decide
+        if the place where it wants to be is conflicted with another one.
+        In case of conflict it will return false.
+         */
         public Boolean checkConflicts(Queen[, ] board, int row, int col) {  
             int i, j;
             //check for left on the row
@@ -20,67 +46,90 @@ namespace Queens
             for (i = row, j = col; j >= 0 && i < board.GetLength(0) - 1; i++, j--) {  
                 if (board[i, j] != null) return false;  
             }  
+            //no need to check right sides since we are placing the queens from left to rigth
             return true;
         }
+        //actually placing the queen
         public void placed(int row, int col){
             this.row=row;
             this.column=col;
         }
+        public void unplace(){
+            this.row=new int();
+            this.column=new int();
+        }
     }
     class Board{
+        /*
+        Board : the chess board to place the queens
+        N : the number of queens that will be placed 
+            or the length of the board
+         */
         public Queen[,] board;
         public int N;
+        //Init
         public Board(int N){
             this.board = new Queen[N,N];
             this.N = N;
         }
+        /*Method for printing the board positions of the queens*/
         public void printBoard(Queen[, ] board) {  
             for (int i = 0; i < N; i++) {  
                 for (int j = 0; j < N; j++) {
                     if(board[i, j]!=null){
-                        Console.Write("1" + " "); 
+                        Console.Write("Q" + " "); 
                     }else{
-                        Console.Write("0 ");
+                        Console.Write("- ");
                     }
                 }  
                 Console.Write("\n");
             }  
         }  
-        public Boolean theBoardSolver(Queen[, ] board, int col) {  
+        /*
+            Solving the problem by placing a Queen per column and iterating the rows,
+            If a queen does not find a suitable place in all the rows, it will remove
+            itself and signal the past queen to move its position  througth backtraking
+            to retry again its positioning        
+         */
+        public Boolean solveQueens(Queen[, ] board, int col) {  
             //When there is one queen per column it is done
             if (col >= N) {
                 return true;
             }  
-            //Putting the queens throgth rows
+            //Iteration to move the current Queen through the board rows
             for (int i = 0; i < N; i++) {
-                Queen queenToPlace = new Queen();
-                //check if the space is available  
-                if (queenToPlace.checkConflicts(board, i, col)) {
-                    queenToPlace.placed(i,col);
+                Queen queenToPlace = new Queen();                   //instantiate new queen
+                if (queenToPlace.checkConflicts(board, i, col)) {   //check if the space is available  
+                    queenToPlace.placed(i,col);                     //placing the queen
                     board[i, col] = queenToPlace;
-                    //If available ready to put the next one
-                    if (theBoardSolver(board, col + 1)){
-                        return true;
+
+                    if (solveQueens(board, col + 1)){               //Next queen follows up in the next column
+                        return true;                                //if the queen is able to be palced returns true
                     }  
-                    // Removing the piece in case the new one is not possible to put
+                    /*
+                        If the next queen is not able to find its spot 
+                        we continue the iteration of the rows for a new
+                        place to test the next queen
+                     */
+                    queenToPlace.unplace();
                     board[i, col] = null;  
                 }  
-            }  
-            return false;  
+            }
+            return false;  //no solution after iterating all columns and all rows without acceptable positions
         }  
     }
     class Program {  
         static int N;
         static void Main(string[] args) {
-            //size of board or queens to put
-            N = 8;
-            Queen[, ] board = new Queen[N, N];
-            //making the board
-            Board board1 = new Board(N);
-            if (!board1.theBoardSolver(board, 0)) {  
-                Console.WriteLine("No solution");  
+            N = 8;                                  //size of board or queens to put
+            Queen[, ] board = new Queen[N, N];      //Array of  Queen objects for the board
+            Board board1 = new Board(N);            //making the board
+            if (!board1.solveQueens(board, 0)) {    //Start the solution
+                Console.WriteLine("No solution"); 
+            }else{
+                board1.printBoard(board);           //Print solution
+
             }
-            board1.printBoard(board);
         }  
     }  
 }
