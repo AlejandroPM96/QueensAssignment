@@ -16,11 +16,8 @@
         -Discrete: The system moves throught the steps the queens take on the chess board
         -Unkown: When a queen is placed it doesn't know where the next ones will be placed
  */
-
-
-
 using System;
-using System.Collections.Generic;
+
 namespace Queens
 {
     class Queen{
@@ -32,27 +29,27 @@ namespace Queens
         if the place where it wants to be is conflicted with another one.
         In case of conflict it will return false.
          */
-        public Boolean checkConflicts(Queen[, ] board, int row, int col) {  
+        public Boolean checkConflicts(Queen[, ] board, int row, int column) {  
             int i, j;
             //check for left on the row
-            for (i = 0; i < col; i++) {  
+            for (i = 0; i < column; i++) {  
                 if (board[row, i] != null) return false;  
             }
             //chjecking the diagonal on the left and up
-            for (i = row, j = col; i >= 0 && j >= 0; i--, j--) {  
+            for (i = row, j = column; i >= 0 && j >= 0; i--, j--) {  
                 if (board[i, j] != null) return false;  
             }
             //checking on the rigth and up
-            for (i = row, j = col; j >= 0 && i < board.GetLength(0) - 1; i++, j--) {  
+            for (i = row, j = column; j >= 0 && i < board.GetLength(0) - 1; i++, j--) {  
                 if (board[i, j] != null) return false;  
             }  
             //no need to check right sides since we are placing the queens from left to rigth
             return true;
         }
         //actually placing the queen
-        public void placed(int row, int col){
+        public void placed(int row, int column){
             this.row=row;
-            this.column=col;
+            this.column=column;
         }
         public void unplace(){
             this.row=new int();
@@ -82,8 +79,9 @@ namespace Queens
                         Console.Write("- ");
                     }
                 }  
-                Console.Write("\n");
+                Console.WriteLine("\n");
             }  
+            Console.WriteLine("*****************");
         }  
         /*
             Solving the problem by placing a Queen per column and iterating the rows,
@@ -91,19 +89,21 @@ namespace Queens
             itself and signal the past queen to move its position  througth backtraking
             to retry again its positioning        
          */
-        public Boolean solveQueens(Queen[, ] board, int col) {  
+        public Boolean solveQueens(Queen[, ] board, int column) {  
             //When there is one queen per column it is done
-            if (col >= N) {
+            if (column >= N) {
                 return true;
             }  
             //Iteration to move the current Queen through the board rows
             for (int i = 0; i < N; i++) {
                 Queen queenToPlace = new Queen();                   //instantiate new queen
-                if (queenToPlace.checkConflicts(board, i, col)) {   //check if the space is available  
-                    queenToPlace.placed(i,col);                     //placing the queen
-                    board[i, col] = queenToPlace;
+                if (queenToPlace.checkConflicts(board, i, column)) {   //check if the space is available  
+                    
+                    queenToPlace.placed(i,column);                     //placing the queen
+                    board[i, column] = queenToPlace;
+                    printBoard(board);
 
-                    if (solveQueens(board, col + 1)){               //Next queen follows up in the next column
+                    if (solveQueens(board, column + 1)){               //Next queen follows up in the next column
                         return true;                                //if the queen is able to be palced returns true
                     }  
                     /*
@@ -112,7 +112,12 @@ namespace Queens
                         place to test the next queen
                      */
                     queenToPlace.unplace();
-                    board[i, col] = null;  
+                    board[i, column] = null;                           /* this one does the callback to the previous queens */
+                    printBoard(board);                              //just to show the steps on the console
+                }else{
+                    board[i, column] = queenToPlace;                   //just to show the steps on the console
+                    printBoard(board);                              //just to show the steps on the console
+                    board[i, column] = null;                           //just to show the steps on the console
                 }  
             }
             return false;  //no solution after iterating all columns and all rows without acceptable positions
