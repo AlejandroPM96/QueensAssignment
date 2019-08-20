@@ -86,7 +86,7 @@ namespace Queens
         /*
             Solving the problem by placing a Queen per column and iterating the rows,
             If a queen does not find a suitable place in all the rows, it will remove
-            itself and signal the past queen to move its position  througth backtraking
+            itself and signal the past queen to move its position through backtracking
             to retry again its positioning        
          */
         public Boolean solveQueens(Queen[, ] board, int column) {  
@@ -104,7 +104,7 @@ namespace Queens
                     printBoard(board);
 
                     if (solveQueens(board, column + 1)){               //Next queen follows up in the next column
-                        return true;                                //if the queen is able to be palced returns true
+                        return true;                                //if the queen is able to be placed returns true
                     }  
                     /*
                         If the next queen is not able to find its spot 
