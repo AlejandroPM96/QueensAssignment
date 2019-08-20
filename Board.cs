@@ -43,8 +43,7 @@ namespace Queens{
                 Queen queenToPlace = new Queen();                   //instantiate new queen
                 if (queenToPlace.checkConflicts(board, i, column)) {   //check if the space is available  
                     
-                    queenToPlace.placed(i,column);                     //placing the queen
-                    board[i, column] = queenToPlace;
+                    board=queenToPlace.placed(board,i,column);              //placing the queen
                     printBoard(board);
 
                     if (solveQueens(board, column + 1)){               //Next queen follows up in the next column
@@ -55,13 +54,13 @@ namespace Queens{
                         we continue the iteration of the rows for a new
                         place to test the next queen
                      */
-                    queenToPlace.unplace();
-                    board[i, column] = null;                           /* this one does the callback to the previous queens */
+                    
+                    board = queenToPlace.unplace(board,i,column);   /* this one does the callback to the previous queens */
                     printBoard(board);                              //just to show the steps on the console
                 }else{
-                    board[i, column] = queenToPlace;                   //just to show the steps on the console
+                    board=queenToPlace.placed(board,i,column);      //just to show the steps on the console
                     printBoard(board);                              //just to show the steps on the console
-                    board[i, column] = null;                           //just to show the steps on the console
+                    board = queenToPlace.unplace(board,i,column);   //just to show the steps on the console
                 }  
             }
             return false;  //no solution after iterating all columns and all rows without acceptable positions

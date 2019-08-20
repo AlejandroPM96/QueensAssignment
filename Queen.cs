@@ -27,13 +27,17 @@ namespace Queens{
             return true;
         }
         //actually placing the queen
-        public void placed(int row, int column){
+        public Queen[,] placed(Queen[,] board,int row, int column){
             this.row=row;
             this.column=column;
+            board[row, column] = this;
+            return board;
         }
-        public void unplace(){
+        public Queen[,] unplace(Queen[,] board, int row, int column){
             this.row=new int();
             this.column=new int();
+            board[row,column]=null;
+            return board;
         }
     }
 }
