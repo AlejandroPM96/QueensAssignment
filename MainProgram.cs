@@ -29,6 +29,7 @@ namespace Queens
             if (!board1.solveQueens(board, 0)) {    //Start the solution
                 Console.WriteLine("No solution"); 
             }else{
+                Console.WriteLine("@Solution");
                 board1.printBoard(board);           //Print solution
             }
         }  
